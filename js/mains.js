@@ -1,4 +1,16 @@
-document.getElementById('filterInput').addEventListener('input', handleFilterInput);
+document.addEventListener('DOMContentLoaded', function() {
+    document.getElementById('filterInput').addEventListener('input', handleFilterInput);
+    document.getElementById('filterInput').addEventListener('input', filterTable);
+
+    const myform = document.getElementById('pedido-form');
+    if (myform) {
+        myform.addEventListener('submit', submitForm);
+    } else {
+        console.error('El formulario con id "pedido-form" no se encontró en el DOM');
+    }
+    
+    fetchAndDisplayData();
+});
 
 function handleFilterInput() {
     var inputField = document.getElementById('filterInput');
@@ -19,7 +31,7 @@ function validateForm() {
     let formGender = document.getElementById('gender');
     let formDetails = document.getElementById('details');
 
-    if (formEmail.value.trim() === ''|| !isValidEmail(formEmailValue)) {
+    if (formEmail.value.trim() === '' || !isValidEmail(formEmail.value)) {
         formEmail.focus();
         alert('Correo electrónico requerido');
         return false;
@@ -81,7 +93,7 @@ function submitForm(eventSubmit) {
     .then(response => response.json())
     .then(data => {
         console.log('Success:', data);
-        alert('Solicitud de Reserva enviada con exito');
+        alert('Solicitud de Reserva enviada con éxito');
         document.getElementById('pedido-form').reset();
         fetchAndDisplayData(); 
     })
@@ -91,26 +103,10 @@ function submitForm(eventSubmit) {
     });
 }
 
-function loaded(eventLoaded) {
-    window.alert("Landing page loaded");
-    console.log(eventLoaded);
-
-    let myform = document.getElementById('pedido-form');
-    if (myform) {
-        myform.addEventListener('submit', submitForm);
-    } else {
-        console.error('El formulario con id "pedido-form" no se encontró en el DOM');
-    }
-    fetchAndDisplayData();
-}
-
-window.addEventListener("DOMContentLoaded", loaded);
-
 async function fetchAndDisplayData() {
     const response = await fetch('https://proyect-424c0-default-rtdb.firebaseio.com/basic.json');
     const data = await response.json();
 
-   
     const tableBody = document.getElementById('tablebody');
     tableBody.innerHTML = ''; 
 
@@ -145,7 +141,6 @@ async function fetchAndDisplayData() {
         totalReservas += reservationCount[key];
     }
 
-    
     document.getElementById('Reservas').textContent = totalReservas;
 }
 
@@ -171,7 +166,6 @@ function filterTable() {
     });
 }
 
-document.getElementById('filterInput').addEventListener('input', filterTable);
 function isValidEmail(email) {
     const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return emailPattern.test(email);
